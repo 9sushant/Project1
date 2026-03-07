@@ -71,8 +71,8 @@ def main():
     # 5. LoRA Adapter Config
     # ==========================
     lora_config = LoraConfig(
-        r=16,
-        lora_alpha=32,
+        r=32,              # Increased from 16 for more adapter capacity
+        lora_alpha=64,     # Scaled with r (alpha = 2*r is a good rule)
         lora_dropout=0.05,
         bias="none",
         task_type="CAUSAL_LM",
@@ -102,18 +102,19 @@ def main():
         output_dir=output_dir,
         per_device_train_batch_size=2,
         gradient_accumulation_steps=4,
-        optim="paged_adamw_8bit", # Optimizer optimized for limited memory
+        optim="paged_adamw_8bit",
         save_steps=50,
-        logging_steps=5,
-        learning_rate=2e-4,
-        weight_decay=0.001,
-        fp16=False, # Disabled: GradScaler conflicts with bitsandbytes internal bf16 on T4
-        bf16=False, # T4 does not support bf16 natively
+        logging_steps=10,
+        learning_rate=2e-5,           # Lowered from 2e-4 for stable convergence
+        weight_decay=0.01,            # Slightly higher regularization
+        fp16=False,
+        bf16=False,
         max_grad_norm=0.3,
-        max_steps=50, # Low value for learning/demonstration purposes
-        warmup_steps=5,
+        num_train_epochs=3,           # 3 full passes over dataset (replaces max_steps=50)
+        warmup_ratio=0.05,            # 5% warmup for smooth start
         lr_scheduler_type="cosine",
-        report_to="none" # disable wandb
+        report_to="none",
+        save_total_limit=2,           # Keep only 2 best checkpoints
     )
 
     # ==========================
@@ -123,6 +124,7 @@ def main():
         model=model,
         train_dataset=dataset,
         args=training_args,
+        max_seq_length=512,           # Ensures full Q&A pairs aren't truncated
     )
 
     print("--- Starting SFT Training ---")

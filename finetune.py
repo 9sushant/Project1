@@ -71,9 +71,9 @@ def main():
     # 5. LoRA Adapter Config
     # ==========================
     lora_config = LoraConfig(
-        r=32,              # Increased from 16 for more adapter capacity
-        lora_alpha=64,     # Scaled with r (alpha = 2*r is a good rule)
-        lora_dropout=0.05,
+        r=32,
+        lora_alpha=64,
+        lora_dropout=0.01,         # Reduced from 0.05 — less noise during training
         bias="none",
         task_type="CAUSAL_LM",
         target_modules=[
@@ -101,20 +101,20 @@ def main():
     training_args = TrainingArguments(
         output_dir=output_dir,
         per_device_train_batch_size=2,
-        gradient_accumulation_steps=4,
+        gradient_accumulation_steps=2,   # More frequent updates (was 4)
         optim="paged_adamw_8bit",
-        save_steps=50,
+        save_steps=100,
         logging_steps=10,
-        learning_rate=2e-5,           # Lowered from 2e-4 for stable convergence
-        weight_decay=0.01,            # Slightly higher regularization
+        learning_rate=5e-5,              # Raised from 2e-5 for faster learning
+        weight_decay=0.01,
         fp16=False,
         bf16=False,
         max_grad_norm=0.3,
-        num_train_epochs=3,           # 3 full passes over dataset (replaces max_steps=50)
-        warmup_steps=10,              # Smooth warmup for stable start
+        num_train_epochs=7,              # 7 full passes (was 3) — key for memorization
+        warmup_steps=15,
         lr_scheduler_type="cosine",
         report_to="none",
-        save_total_limit=2,           # Keep only 2 best checkpoints
+        save_total_limit=2,
     )
 
     # ==========================

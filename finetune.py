@@ -107,8 +107,8 @@ def main():
         logging_steps=5,
         learning_rate=2e-4,
         weight_decay=0.001,
-        fp16=True, # Depending on GPU, bf16 might be better (A100), but fp16 for T4
-        bf16=False, # Explicitly disable bf16
+        fp16=False, # Disabled: GradScaler conflicts with bitsandbytes internal bf16 on T4
+        bf16=False, # T4 does not support bf16 natively
         max_grad_norm=0.3,
         max_steps=50, # Low value for learning/demonstration purposes
         warmup_steps=5,

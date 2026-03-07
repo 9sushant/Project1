@@ -56,10 +56,16 @@ def main():
         model_name,
         quantization_config=bnb_config,
         device_map="auto",
-        dtype=torch.float16,
+        torch_dtype=torch.float16,
         trust_remote_code=True
     )
     model.config.use_cache = False # Disable caching for gradient checkpointing
+    model.config.torch_dtype = torch.float16 # Hard override to prevent PEFT from inferring BFloat16
+
+    # Cleanse any lingering bfloat16 buffers
+    for buffer in model.buffers():
+        if buffer.dtype == torch.bfloat16:
+            buffer.data = buffer.data.to(torch.float16)
 
     # ==========================
     # 5. LoRA Adapter Config

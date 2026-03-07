@@ -33,7 +33,7 @@ git init
 git add .
 git commit -m "Initial commit for Mistral Fine-Tuning Project"
 git branch -M main
-git remote add origin https://github.com/YOUR_GITHUB_USERNAME/YOUR_REPOSITORY_NAME.git
+git remote add origin https://github.com/9sushant/Project1.git
 git push -u origin main
 ```
 

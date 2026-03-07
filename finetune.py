@@ -95,7 +95,6 @@ def main():
         max_grad_norm=0.3,
         max_steps=50, # Low value for learning/demonstration purposes
         warmup_ratio=0.03,
-        group_by_length=True,
         lr_scheduler_type="cosine",
         report_to="none" # disable wandb
     )

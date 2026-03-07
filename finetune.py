@@ -7,7 +7,7 @@ from transformers import (
     BitsAndBytesConfig,
     TrainingArguments
 )
-from peft import LoraConfig, get_peft_model
+from peft import LoraConfig, get_peft_model, prepare_model_for_kbit_training
 from trl import SFTTrainer
 
 def main():
@@ -56,7 +56,7 @@ def main():
         model_name,
         quantization_config=bnb_config,
         device_map="auto",
-        torch_dtype=torch.float16,
+        dtype=torch.float16,
         trust_remote_code=True
     )
     model.config.use_cache = False # Disable caching for gradient checkpointing
@@ -75,6 +75,9 @@ def main():
             "gate_proj", "up_proj", "down_proj",
         ]
     )
+
+    # Prepare model for 4-bit training
+    model = prepare_model_for_kbit_training(model)
 
     # Apply PEFT model explicitly
     model = get_peft_model(model, lora_config)
@@ -99,6 +102,7 @@ def main():
         learning_rate=2e-4,
         weight_decay=0.001,
         fp16=True, # Depending on GPU, bf16 might be better (A100), but fp16 for T4
+        bf16=False, # Explicitly disable bf16
         max_grad_norm=0.3,
         max_steps=50, # Low value for learning/demonstration purposes
         warmup_steps=5,

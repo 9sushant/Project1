@@ -94,7 +94,7 @@ def main():
         fp16=True, # Depending on GPU, bf16 might be better (A100), but fp16 for T4
         max_grad_norm=0.3,
         max_steps=50, # Low value for learning/demonstration purposes
-        warmup_ratio=0.03,
+        warmup_steps=5,
         lr_scheduler_type="cosine",
         report_to="none" # disable wandb
     )
@@ -105,7 +105,6 @@ def main():
     trainer = SFTTrainer(
         model=model,
         train_dataset=dataset,
-        peft_config=lora_config,
         args=training_args,
     )
 

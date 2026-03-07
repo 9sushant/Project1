@@ -56,6 +56,7 @@ def main():
         model_name,
         quantization_config=bnb_config,
         device_map="auto",
+        torch_dtype=torch.float16,
         trust_remote_code=True
     )
     model.config.use_cache = False # Disable caching for gradient checkpointing

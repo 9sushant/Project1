@@ -78,6 +78,12 @@ def main():
 
     # Apply PEFT model explicitly
     model = get_peft_model(model, lora_config)
+    
+    # Force float16 for all adapter parameters to fix T4 bfloat16 errors
+    for name, param in model.named_parameters():
+        if param.dtype == torch.bfloat16:
+            param.data = param.data.to(torch.float16)
+            
     model.print_trainable_parameters()
 
     # ==========================

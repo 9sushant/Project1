@@ -100,17 +100,13 @@ def main():
     )
 
     # ==========================
-    # 7. SFT Trainer
+    # 7. SFTTrainer Update (v0.8.0+)
     # ==========================
     trainer = SFTTrainer(
         model=model,
         train_dataset=dataset,
         peft_config=lora_config,
-        dataset_text_field="text",
-        max_seq_length=1024, # Maximum length of input tokens
-        tokenizer=tokenizer,
         args=training_args,
-        packing=False
     )
 
     print("--- Starting SFT Training ---")

@@ -111,7 +111,7 @@ def main():
         bf16=False,
         max_grad_norm=0.3,
         num_train_epochs=3,           # 3 full passes over dataset (replaces max_steps=50)
-        warmup_ratio=0.05,            # 5% warmup for smooth start
+        warmup_steps=10,              # Smooth warmup for stable start
         lr_scheduler_type="cosine",
         report_to="none",
         save_total_limit=2,           # Keep only 2 best checkpoints
@@ -124,7 +124,6 @@ def main():
         model=model,
         train_dataset=dataset,
         args=training_args,
-        max_seq_length=512,           # Ensures full Q&A pairs aren't truncated
     )
 
     print("--- Starting SFT Training ---")
